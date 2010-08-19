@@ -128,7 +128,6 @@ public final class BlockingWorkStealingScheduler<T extends ImplicitTask> extends
 	}
 
 	public final void signalWork(WorkerThread<T> thread) {
-		// TODO: need to fix that to wake up thread waiting for objects to complete
 		LockSupport.unpark(thread);
 		WorkerThread<T> threadParked = parkedThreads.poll();
 		if ( threadParked != null ) {
@@ -136,6 +135,7 @@ public final class BlockingWorkStealingScheduler<T extends ImplicitTask> extends
 		}
 	}
 	
+
 	public final void signalWork() {
 		WorkerThread<T> threadParked = parkedThreads.poll();
 		if ( threadParked != null ) {

@@ -1,6 +1,6 @@
 package aeminium.runtime.tools.benchmark.forkjoin.fibonacci;
 
-import aeminium.runtime.Body;
+import aeminium.runtime.ResultBody;
 import aeminium.runtime.Runtime;
 import aeminium.runtime.Task;
 import aeminium.runtime.implementations.Configuration;
@@ -9,7 +9,9 @@ import aeminium.runtime.tools.benchmark.Reporter;
 
 public class AeminiumFibonacciBenchmark extends FibonacciBenchmark {
 
-	public static class FibBody implements Body {
+	public static class FibBody implements ResultBody {
+		private FibBody b1;
+		private FibBody b2;
 		public volatile int value;
 		
 		FibBody(int n) {
@@ -25,21 +27,26 @@ public class AeminiumFibonacciBenchmark extends FibonacciBenchmark {
 		}
 		
 		@Override
+		public final void completed() {
+			if ( b1 != null && b2 != null ) {
+				value = b1.value + b2.value;
+				b1 = null;
+				b2 = null;
+			}
+		}
+		
+		@Override
 		public final void execute(Runtime rt, Task current) {
 			if ( value <= THRESHOLD  ) {
 				value = seqFib(value);
 			} else {
-				FibBody b1 = new FibBody(value-1);
+				b1 = new FibBody(value-1);
 				Task t1 = rt.createNonBlockingTask(b1, Runtime.NO_HINTS);
 				rt.schedule(t1, current, Runtime.NO_DEPS);
 
-				FibBody b2 = new FibBody(value-2);
+				b2 = new FibBody(value-2);
 				Task t2 = rt.createNonBlockingTask(b2, Runtime.NO_HINTS);
 				rt.schedule(t2, current, Runtime.NO_DEPS);
-				
-				t1.getResult();
-				t2.getResult();
-				value = b1.value + b2.value;
 			} 
 		}
 		
