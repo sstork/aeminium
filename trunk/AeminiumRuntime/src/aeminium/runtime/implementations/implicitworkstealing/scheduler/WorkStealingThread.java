@@ -26,7 +26,7 @@ import aeminium.runtime.implementations.implicitworkstealing.ImplicitWorkStealin
 import aeminium.runtime.implementations.implicitworkstealing.task.ImplicitTask;
 
 public final class WorkStealingThread extends AeminiumThread {
-	protected final ImplicitWorkStealingRuntime rt;
+	public final ImplicitWorkStealingRuntime rt;
 	public final int index;
 	protected volatile boolean shutdown = false;
 	protected final int pollingCount   = Configuration.getProperty(getClass(), "pollingCount", 5);
@@ -101,6 +101,26 @@ public final class WorkStealingThread extends AeminiumThread {
 			return queue.size();
 		}
 		return 0;
+	}
+
+	public final void processOtherTasks() {
+		int pollCounter = pollingCount;
+		while ( 0 < pollCounter  ) {
+			ImplicitTask task = null;
+			task = taskQueue.pop();
+			if ( task != null ) {
+				task.invoke(rt);
+			} else {
+				// scan for other queues
+				task = rt.scheduler.scanQueues(this);
+				if ( task != null ) {
+					task.invoke(rt);
+				} else {
+					pollCounter--;
+				}
+			}
+		}
+		Thread.yield();
 	}
 	
 	public final void progressToCompletion(ImplicitTask toComplete) {
