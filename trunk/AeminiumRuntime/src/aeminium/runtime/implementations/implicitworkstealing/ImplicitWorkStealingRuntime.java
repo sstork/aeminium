@@ -207,19 +207,35 @@ public final class ImplicitWorkStealingRuntime implements Runtime {
  			}
 		}
 		graph.addTask((ImplicitTask)task, parent, deps);
+		
+		Thread thread = Thread.currentThread();
+		if ( thread instanceof WorkStealingThread ) {
+			((WorkStealingThread)thread).scheduleTasks++;
+		}
 	}
 
 	@Override
 	public final boolean parallelize() {
+		//System.out.println(this.scheduler.getPendingTasks());
+
+
+		
 		Thread thread = Thread.currentThread();
 		if ( thread instanceof WorkStealingThread ) {
 			if ( ((WorkStealingThread)thread).getTaskQueue().size() > parallelizeThreshold ) {
 				return false;
 			} else {
-				return true;
+				//return true;
+				if ( this.scheduler.getPendingTasks() > parallelizeThreshold ) {
+					return false;
+				} else {
+					return true;
+				}
 			}
 		}
+		
 		return true;
+
 	}
 	
 	public final ExecutorService getExecutorService() {

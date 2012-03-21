@@ -185,6 +185,11 @@ public abstract class ImplicitTask implements Task {
 		if ( waiter != null ) {
 			notifyAll();
 		}
+		
+		Thread thread = Thread.currentThread();
+		if ( thread instanceof WorkStealingThread ) {
+			((WorkStealingThread)thread).completedTasks++;
+		}
 	}
 
 	public final boolean isCompleted() {

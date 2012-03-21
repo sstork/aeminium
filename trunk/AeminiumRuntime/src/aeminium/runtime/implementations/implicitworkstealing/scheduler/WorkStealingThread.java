@@ -33,6 +33,9 @@ public final class WorkStealingThread extends AeminiumThread {
 	public int remainingRecursionDepth = Configuration.getProperty(getClass(), "maxRecursionDepth", 512);;
 	protected WorkStealingQueue<ImplicitTask> taskQueue;
 	protected static final AtomicInteger IdGenerator = new AtomicInteger(0);
+	public long scheduleTasks = 0;
+	public long completedTasks = 0;
+	
 	
 	public WorkStealingThread(ImplicitWorkStealingRuntime rt, int index) {
 		this.rt           = rt;
