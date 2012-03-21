@@ -67,6 +67,7 @@ public final class BlockingThreadPool {
 		rt           = null;
 		eventManager = null;
 	}
+
 	
 	protected ImplicitBlockingTask getWork() {
 		synchronized (taskQueue) {

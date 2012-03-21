@@ -103,6 +103,15 @@ public final class BlockingWorkStealingScheduler {
 		}
 	}
 
+
+	public final long getPendingTasks() {
+		long pending = 0;
+		for (int i = 0; i < threads.length ; i++ ) {
+			pending  += threads[i].scheduleTasks - threads[i].completedTasks;
+		}
+		return pending;
+	}
+	
 	protected WorkStealingAlgorithm loadWorkStealingAlgorithm(String name) {
 		WorkStealingAlgorithm wsa = null;
 		
