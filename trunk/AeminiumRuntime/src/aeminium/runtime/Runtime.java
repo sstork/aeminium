@@ -22,8 +22,11 @@ package aeminium.runtime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.locks.ReentrantLock;
 
 public interface Runtime {
+	final static ReentrantLock GLOBAL_LOCK = new ReentrantLock(true);
+	
     /* global constants used for the */
     public final static Collection<Task> NO_DEPS = new ArrayList<Task>() {
 		private static final long serialVersionUID = 1852797887380877437L;

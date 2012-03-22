@@ -35,6 +35,7 @@ public final class WorkStealingThread extends AeminiumThread {
 	protected static final AtomicInteger IdGenerator = new AtomicInteger(0);
 	public long scheduleTasks = 0;
 	public long completedTasks = 0;
+	public int inAtomic = 0;
 	
 	
 	public WorkStealingThread(ImplicitWorkStealingRuntime rt, int index) {
@@ -46,6 +47,14 @@ public final class WorkStealingThread extends AeminiumThread {
 	public final WorkStealingQueue<ImplicitTask> getTaskQueue() {
 		return taskQueue;
 	}
+	
+	public void enterAtomic() {
+		this.inAtomic++;
+	}
+	
+	public void leaveAtomic() {
+		this.inAtomic--;
+	}	
 	
 	public final void shutdown() {
 		shutdown = true;
