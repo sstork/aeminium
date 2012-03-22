@@ -222,7 +222,8 @@ public final class ImplicitWorkStealingRuntime implements Runtime {
 		
 		Thread thread = Thread.currentThread();
 		if ( thread instanceof WorkStealingThread ) {
-			if ( ((WorkStealingThread)thread).getTaskQueue().size() > parallelizeThreshold ) {
+			WorkStealingThread wthread = ((WorkStealingThread)thread);
+			if ( wthread.inAtomic != 0 || wthread.getTaskQueue().size() > parallelizeThreshold ) {
 				return false;
 			} else {
 				//return true;
