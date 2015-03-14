@@ -1,0 +1,1 @@
+The goal of the Æminium project is to provide easy and seamless support for programming parallel/concurrent programs.
